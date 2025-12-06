@@ -48,10 +48,12 @@
 stage('Credential Smoke Test') {
   steps {
     sshagent(credentials: ['ec2-ssh-key']) {
+        EC2_HOST = "ec2-user@98.81.206.158"
       sh 'ssh -o StrictHostKeyChecking=no ${EC2_HOST} "echo Connected OK; uname -a"'
     }
   }
 }
+
 
 
 
