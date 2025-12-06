@@ -4,7 +4,7 @@ pipeline {
         githubPush() // Auto-trigger on GitHub push
     }
     environment {
-        EC2_HOST = “ec2-user@98.81.206.158” 
+        EC2_HOST = "ec2-user@98.81.206.158"
         SSH_KEY = credentials('ec2-ssh-key') // Jenkins credential ID
     }
     stages {
@@ -42,5 +42,6 @@ pipeline {
         }
     }
 }
+
 
 
