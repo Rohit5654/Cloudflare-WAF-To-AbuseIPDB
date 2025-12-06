@@ -1,4 +1,4 @@
-pipeline {
+/*pipeline {
     agent any
     triggers {
         githubPush() // Auto-trigger on GitHub push
@@ -42,6 +42,17 @@ pipeline {
         }
     }
 }
+*/
+
+
+stage('Credential Smoke Test') {
+  steps {
+    sshagent(credentials: ['ec2-ssh-key']) {
+      sh 'ssh -o StrictHostKeyChecking=no ${EC2_HOST} "echo Connected OK; uname -a"'
+    }
+  }
+}
+
 
 
 
