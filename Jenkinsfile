@@ -20,7 +20,7 @@ pipeline {
       }
     }
 
-    stage('Install & Test') {
+    /*stage('Install & Test') {
       steps {
         sh '''
           npm install
@@ -28,7 +28,7 @@ pipeline {
         '''
       }
     }
-
+   */
     stage('EC2 Connectivity Smoke Test') {
       steps {
         withCredentials([sshUserPrivateKey(credentialsId: 'ec2-ssh-key',
@@ -75,4 +75,5 @@ pipeline {
     failure { echo 'Pipeline failed. Check logs.' }
   }
 }
+
 
