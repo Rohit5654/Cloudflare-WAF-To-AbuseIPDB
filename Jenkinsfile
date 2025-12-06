@@ -1,55 +1,44 @@
-
 pipeline {
     agent any
-
     triggers {
-        // Trigger build when GitHub webhook is received
-        githubPush()
+        githubPush() // Auto-trigger on GitHub push
     }
-
     environment {
-        NODE_HOME = '/usr/bin' // Adjust if Node.js is installed elsewhere
+        EC2_HOST = “ec2-user@98.81.206.158” 
+        SSH_KEY = credentials('ec2-ssh-key') // Jenkins credential ID
     }
-
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/Rohit5654/Cloudflare-WAF-To-AbuseIPDB.git'
+                git branch: 'main', url: 'https://github.com/your-username/node-app.git'
             }
         }
-
-        stage('Install Dependencies') {
+        stage('Install & Test') {
             steps {
-                sh 'npm install'
+                sh """
+                  npm install
+                  npm test
+                """
             }
         }
-
-        stage('Build') {
+        stage('Deploy to EC2') {
             steps {
-                sh 'echo "Build step (optional for Node.js)"'
-            }
-        }
+                sh """
+                  # Copy files to EC2
+                  scp -o StrictHostKeyChecking=no -i $SSH_KEY -r * $EC2_HOST:/home/ec2-user/node-app
 
-        stage('Deploy') {
-            steps {
-                // Use PM2 for process management
-                sh '''
-                if ! command -v pm2 &> /dev/null; then
-                  npm install -g pm2
-                fi
-                pm2 stop all || true
-                pm2 start app.js --name node-app
-                '''
+                  # SSH into EC2 and restart app
+                  ssh -o StrictHostKeyChecking=no -i $SSH_KEY $EC2_HOST "cd /home/ec2-user/node-app && npm install --production && nohup npm start > app.log 2>&1 &"
+                """
             }
         }
     }
-
     post {
         success {
-            echo 'Deployment successful!'
+            echo "Deployment successful!"
         }
         failure {
-            echo 'Deployment failed!'
+            echo "Pipeline failed. Check logs."
         }
     }
 }
