@@ -1,4 +1,13 @@
 
+
+environment {
+    EC2_USER = 'ec2-user'            // 'ubuntu' for Ubuntu AMIs
+    EC2_IP   = '98.81.206.158'       // <-- your EC2 public IP
+  }
+
+
+
+
 stage('EC2 Connectivity Smoke Test') {
   steps {
     withCredentials([sshUserPrivateKey(
@@ -21,3 +30,4 @@ stage('EC2 Connectivity Smoke Test') {
     }
   }
 }
+
